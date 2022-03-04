@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.humanresources.dao.BizInStockDao">
+
+    <resultMap type="com.example.humanresources.entity.BizInStock" id="BizInStockMap">
+        <result property="id" column="id" jdbcType="INTEGER"/>
+        <result property="inNum" column="in_num" jdbcType="VARCHAR"/>
+        <result property="type" column="type" jdbcType="INTEGER"/>
+        <result property="operator" column="operator" jdbcType="VARCHAR"/>
+        <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+        <result property="modified" column="modified" jdbcType="TIMESTAMP"/>
+        <result property="productNumber" column="product_number" jdbcType="INTEGER"/>
+        <result property="supplierId" column="supplier_id" jdbcType="INTEGER"/>
+        <result property="remark" column="remark" jdbcType="VARCHAR"/>
+        <result property="status" column="status" jdbcType="INTEGER"/>
+    </resultMap>
+
+    <sql id="BaseResult">
+        id, in_num, type, operator, create_time, modified, product_number, supplier_id, remark, status    </sql>
+
+    <!--根据id查询-->
+    <select id="selectById" resultType="com.example.humanresources.entity.BizInStock">
+        select
+        <include refid="BaseResult"/>
+        from biz_in_stock
+        where id = #{id}
+    </select>
+
+    <!--查询所有数据-->
+    <select id="selectAllByStatus" resultType="com.example.humanresources.entity.BizInStock">
+        select bis.*,
+        s.name,
+        s.phone
+        from biz_in_stock bis,
+        biz_supplier s
+        <where>
+            <if test="inNum != null">
+                <bind name="pattern" value=" '%' + inNum + '%'"/>
+                and bis.in_num like #{pattern}
+            </if>
+            <if test="type != null">
+                and bis.type = #{type}
+            </if>
+            <if test="startTime != null and endTime != null">
+                and bis.create_time between #{startTime} and #{endTime}
+            </if>
+            and bis.supplier_id = s.id
+            and bis.status = #{status}
+        </where>
+
+
+    </select>
+
+    <!--新增所有列-->
+    <insert id="insert" keyProperty="id" useGeneratedKeys="true">
+        insert into biz_in_stock(<include refid="BaseResult"/>)
+        values (null,#{inNum}, #{type}, #{operator}, #{createTime}, #{modified}, #{productNumber}, #{supplierId}, #{remark}, #{status})
+    </insert>
+
+    <!--通过主键id修改数据-->
+    <update id="updateById">
+        update biz_in_stock
+        <set>
+            <if test="inNum != null and inNum != ''">
+                in_num = #{inNum},
+            </if>
+            <if test="type != null">
+                type = #{type},
+            </if>
+            <if test="operator != null and operator != ''">
+                operator = #{operator},
+            </if>
+            <if test="createTime != null">
+                create_time = #{createTime},
+            </if>
+            <if test="modified != null">
+                modified = #{modified},
+            </if>
+            <if test="productNumber != null">
+                product_number = #{productNumber},
+            </if>
+            <if test="supplierId != null">
+                supplier_id = #{supplierId},
+            </if>
+            <if test="remark != null and remark != ''">
+                remark = #{remark},
+            </if>
+            <if test="status != null">
+                status = #{status},
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <!--通过主键id删除-->
+    <delete id="deleteById">
+        delete
+        from biz_in_stock
+        where id = #{id}
+    </delete>
+
+</mapper>

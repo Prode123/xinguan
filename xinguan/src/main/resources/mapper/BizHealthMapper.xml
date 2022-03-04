@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.humanresources.dao.BizHealthDao">
+
+    <resultMap type="com.example.humanresources.entity.BizHealth" id="BizHealthMap">
+        <result property="id" column="id" jdbcType="INTEGER"/>
+        <result property="address" column="address" jdbcType="VARCHAR"/>
+        <result property="userId" column="user_id" jdbcType="INTEGER"/>
+        <result property="situation" column="situation" jdbcType="INTEGER"/>
+        <result property="touch" column="touch" jdbcType="INTEGER"/>
+        <result property="passby" column="passby" jdbcType="INTEGER"/>
+        <result property="reception" column="reception" jdbcType="INTEGER"/>
+        <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+    </resultMap>
+
+    <sql id="BaseResult">
+        id, address, user_id, situation, touch, passby, reception, create_time    </sql>
+
+    <!--根据id查询-->
+    <select id="selectById" resultType="com.example.humanresources.entity.BizHealth">
+        select<include refid="BaseResult"/>
+        from biz_health
+        where id = #{id}
+    </select>
+
+    <!--  获取当天的健康上报信息-->
+    <select id="selectByUserIdIsReport" resultType="com.example.humanresources.entity.BizHealth">
+       select biz_health.id, address, user_id,situation, touch, passby,
+       reception, biz_health.create_time
+        from biz_health,tb_user
+        where to_days(biz_health.create_time) = to_days(now())
+        and biz_health.user_id = tb_user.id
+        and tb_user.username=#{username}
+    </select>
+
+    <!--查询所有数据-->
+    <select id="selectAll" resultMap="BizHealthMap">
+        select<include refid="BaseResult"/>
+        from biz_health
+    </select>
+
+
+
+<!--通过username查询表中所有数据-->
+    <select id="selectByUserUsername" resultMap="BizHealthMap">
+        select biz_health.id, address, user_id,situation, touch, passby,
+       reception, biz_health.create_time
+        from biz_health,tb_user
+        where biz_health.user_id = tb_user.id
+        and tb_user.username=#{username}
+        order by biz_health.create_time desc
+    </select>
+
+
+    <!--新增所有列-->
+    <insert id="insert" keyProperty="id" useGeneratedKeys="true">
+        insert into biz_health(<include refid="BaseResult"/>)
+        values (null,#{address}, #{userId}, #{situation}, #{touch}, #{passby}, #{reception}, #{createTime})
+    </insert>
+
+    <!--通过主键id修改数据-->
+    <update id="updateById">
+        update biz_health
+        <set>
+            <if test="address != null and address != ''">
+                address = #{address},
+            </if>
+            <if test="userId != null">
+                user_id = #{userId},
+            </if>
+            <if test="situation != null">
+                situation = #{situation},
+            </if>
+            <if test="touch != null">
+                touch = #{touch},
+            </if>
+            <if test="passby != null">
+                passby = #{passby},
+            </if>
+            <if test="reception != null">
+                reception = #{reception},
+            </if>
+            <if test="createTime != null">
+                create_time = #{createTime},
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <!--通过主键id删除-->
+    <delete id="deleteById">
+        delete from biz_health where id = #{id}
+    </delete>
+
+</mapper>

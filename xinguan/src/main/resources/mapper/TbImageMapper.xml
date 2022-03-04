@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.humanresources.dao.TbImageDao">
+
+    <resultMap type="com.example.humanresources.entity.TbImage" id="TbImageMap">
+        <result property="id" column="id" jdbcType="INTEGER"/>
+        <result property="path" column="path" jdbcType="VARCHAR"/>
+        <result property="size" column="size" jdbcType="INTEGER"/>
+        <result property="mediaType" column="media_type" jdbcType="VARCHAR"/>
+        <result property="suffix" column="suffix" jdbcType="VARCHAR"/>
+        <result property="height" column="height" jdbcType="INTEGER"/>
+        <result property="width" column="width" jdbcType="INTEGER"/>
+        <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+    </resultMap>
+
+    <sql id="BaseResult">
+        id, path, size, media_type, suffix, height, width, create_time    </sql>
+
+    <!--根据id查询-->
+    <select id="selectById" resultType="com.example.humanresources.entity.TbImage">
+        select<include refid="BaseResult"/>
+        from tb_image
+        where id = #{id}
+    </select>
+
+    <!--查询所有数据-->
+    <select id="selectAll" resultMap="TbImageMap">
+        select<include refid="BaseResult"/>
+        from tb_image
+    </select>
+
+    <!--新增所有列-->
+    <insert id="insert" keyProperty="id" useGeneratedKeys="true">
+        insert into tb_image(<include refid="BaseResult"/>)
+        values (null,#{path}, #{size}, #{mediaType}, #{suffix}, #{height}, #{width}, #{createTime})
+    </insert>
+
+    <!--通过主键id修改数据-->
+    <update id="updateById">
+        update tb_image
+        <set>
+            <if test="path != null and path != ''">
+                path = #{path},
+            </if>
+            <if test="size != null">
+                size = #{size},
+            </if>
+            <if test="mediaType != null and mediaType != ''">
+                media_type = #{mediaType},
+            </if>
+            <if test="suffix != null and suffix != ''">
+                suffix = #{suffix},
+            </if>
+            <if test="height != null">
+                height = #{height},
+            </if>
+            <if test="width != null">
+                width = #{width},
+            </if>
+            <if test="createTime != null">
+                create_time = #{createTime},
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <!--通过主键id删除-->
+    <delete id="deleteById">
+        delete from tb_image where id = #{id}
+    </delete>
+
+
+    <select id="selectVagueAll" resultMap="TbImageMap">
+        select<include refid="BaseResult"/>
+        from tb_image
+        <where>
+            <if test="mediaType != null">
+               and media_type like concat('%',#{mediaType},'%')
+            </if>
+            <if test="suffix != null">
+                and  suffix like concat('%',#{suffix},'%')
+            </if>
+            <if test="path != null">
+                and  path like concat('%',#{path},'%')
+            </if>
+        </where>
+    </select>
+
+</mapper>

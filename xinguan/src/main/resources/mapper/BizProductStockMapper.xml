@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.humanresources.dao.BizProductStockDao">
+
+    <resultMap type="com.example.humanresources.entity.BizProductStock" id="BizProductStockMap">
+        <result property="id" column="id" jdbcType="INTEGER"/>
+        <result property="pNum" column="p_num" jdbcType="VARCHAR"/>
+        <result property="stock" column="stock" jdbcType="INTEGER"/>
+    </resultMap>
+
+    <sql id="BaseResult">
+        id, p_num, stock    </sql>
+
+    <!--根据id查询-->
+    <select id="selectById" resultType="com.example.humanresources.entity.BizProductStock">
+        select
+        <include refid="BaseResult"/>
+        from biz_product_stock
+        where id = #{id}
+    </select>
+
+    <!--查询所有数据-->
+    <select id="selectAll" resultMap="BizProductStockMap">
+        select
+        <include refid="BaseResult"/>
+        from biz_product_stock
+    </select>
+    <select id="selectByPNum" resultMap="BizProductStockMap">
+        select
+        <include refid="BaseResult"/>
+        from biz_product_stock
+        where p_num = #{PNum}
+    </select>
+
+    <!--新增所有列-->
+    <insert id="insert" keyProperty="id" useGeneratedKeys="true">
+        insert into biz_product_stock(<include refid="BaseResult"/>)
+        values (null,#{pNum}, #{stock})
+    </insert>
+
+    <!--通过主键id修改数据-->
+    <update id="updateById">
+        update biz_product_stock
+        <set>
+            <if test="pNum != null and pNum != ''">
+                p_num = #{pNum},
+            </if>
+            <if test="stock != null">
+                stock = #{stock},
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <!--通过PNum删除-->
+    <delete id="deleteByPNum">
+        delete
+        from biz_product_stock
+        where p_num = #{PNum}
+    </delete>
+
+</mapper>

@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.humanresources.dao.TbDepartmentDao">
+
+    <resultMap type="com.example.humanresources.entity.TbDepartmentResultMap" id="TbDepartmentResultMap">
+        <result property="id" column="id" jdbcType="INTEGER"/>
+        <result property="name" column="name" jdbcType="VARCHAR"/>
+        <result property="phone" column="phone" jdbcType="VARCHAR"/>
+        <result property="address" column="address" jdbcType="VARCHAR"/>
+        <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+        <result property="modifiedTime" column="modified_time" jdbcType="TIMESTAMP"/>
+    </resultMap>
+
+    <resultMap type="com.example.humanresources.entity.TbDepartment" id="TbDepartmentMap">
+        <result property="id" column="id" jdbcType="INTEGER"/>
+        <result property="name" column="name" jdbcType="VARCHAR"/>
+        <result property="phone" column="phone" jdbcType="VARCHAR"/>
+        <result property="address" column="address" jdbcType="VARCHAR"/>
+        <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+        <result property="modifiedTime" column="modified_time" jdbcType="TIMESTAMP"/>
+    </resultMap>
+
+    <sql id="BaseResult">
+        id, name, phone, address, create_time, modified_time    </sql>
+
+    <!--根据id查询-->
+    <select id="selectById" resultMap="TbDepartmentResultMap">
+        select<include refid="BaseResult"/>
+        from tb_department
+        where id = #{id}
+    </select>
+
+    <!--查询所有数据-->
+    <select id="selectAll" resultMap="TbDepartmentResultMap">
+        select<include refid="BaseResult"/>
+        from tb_department
+    </select>
+
+    <!--通过名字查询-->
+    <select id="selectByName" parameterType="String" resultMap="TbDepartmentResultMap">
+        select * from tb_department where name like "%"#{name}"%"
+    </select>
+
+    <!--查询部门人数-->
+    <select id="selectNum" resultType="com.example.humanresources.entity.DepartmentNum">
+        select department_id,count(*) num from tb_user group by department_id
+    </select>
+
+
+    <!--新增所有列-->
+    <insert id="insert" keyProperty="id" useGeneratedKeys="true">
+        insert into tb_department(<include refid="BaseResult"/>)
+        values (null,#{name}, #{phone}, #{address}, #{createTime}, #{modifiedTime})
+    </insert>
+
+    <!--通过主键id修改数据-->
+    <update id="updateById">
+        update tb_department
+        <set>
+            <if test="name != null and name != ''">
+                name = #{name},
+            </if>
+            <if test="phone != null and phone != ''">
+                phone = #{phone},
+            </if>
+            <if test="address != null and address != ''">
+                address = #{address},
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <!--通过主键id删除-->
+    <delete id="deleteById">
+        delete from tb_department where id = #{id}
+    </delete>
+
+</mapper>

@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.humanresources.dao.BizProductCategoryDao">
+
+    <resultMap type="com.example.humanresources.entity.BizProductCategory" id="BizProductCategoryMap">
+        <result property="id" column="id" jdbcType="INTEGER"/>
+        <result property="name" column="name" jdbcType="VARCHAR"/>
+        <result property="remark" column="remark" jdbcType="VARCHAR"/>
+        <result property="sort" column="sort" jdbcType="INTEGER"/>
+        <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+        <result property="modifiedTime" column="modified_time" jdbcType="TIMESTAMP"/>
+        <result property="pid" column="pid" jdbcType="INTEGER"/>
+    </resultMap>
+
+    <sql id="BaseResult">
+        id
+        , name, remark, sort, create_time, modified_time, pid    </sql>
+
+    <!--根据id查询-->
+    <select id="selectById" resultType="com.example.humanresources.entity.BizProductCategory">
+        select
+        <include refid="BaseResult"/>
+        from biz_product_category
+        where id = #{id}
+    </select>
+
+    <!--查询所有数据-->
+    <select id="selectAll" resultMap="BizProductCategoryMap">
+        select
+        <include refid="BaseResult"/>
+        from biz_product_category
+    </select>
+
+    <select id="selectByPid" resultType="com.example.humanresources.entity.BizProductCategory">
+        select
+        <include refid="BaseResult"/>
+        from biz_product_category
+        where pid=#{pid}
+    </select>
+
+    <select id="selectTwo" resultType="java.lang.Integer">
+        select count(*)
+        from biz_product bp
+        where bp.one_category_id = #{id}
+           or two_category_id = #{id}
+           or three_category_id = #{id}
+    </select>
+
+    <select id="findALL" resultType="com.example.humanresources.entity.BizProductCategory">
+        select
+        <include refid="BaseResult"/>
+        from biz_product_category
+    </select>
+
+    <!--新增所有列-->
+    <insert id="insert" keyProperty="id" useGeneratedKeys="true">
+        insert into biz_product_category(<include refid="BaseResult"/>)
+        values (null,#{name}, #{remark}, #{sort}, #{createTime}, #{modifiedTime}, #{pid})
+    </insert>
+
+    <!--通过主键id修改数据-->
+    <update id="updateById">
+        update biz_product_category
+        <set>
+            <if test="name != null and name != ''">
+                name = #{name},
+            </if>
+            <if test="remark != null and remark != ''">
+                remark = #{remark},
+            </if>
+            <if test="sort != null">
+                sort = #{sort},
+            </if>
+            <if test="createTime != null">
+                create_time = #{createTime},
+            </if>
+            <if test="modifiedTime != null">
+                modified_time = #{modifiedTime},
+            </if>
+            <if test="pid != null">
+                pid = #{pid},
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <!--通过主键id删除-->
+    <delete id="deleteById">
+        delete
+        from biz_product_category
+        where id = #{id}
+    </delete>
+    <!--    /**
+         * 通过id连表删除数据
+         * @author lt
+         */-->
+    <!--        <delete id="deleteCategoryById">-->
+    <!--            delete-->
+    <!--            from biz_product_category-->
+    <!--            where -->
+    <!--        </delete>-->
+
+</mapper>

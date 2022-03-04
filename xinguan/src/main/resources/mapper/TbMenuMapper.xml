@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.humanresources.dao.TbMenuDao">
+
+    <resultMap type="com.example.humanresources.entity.TbMenu" id="TbMenuMap">
+        <result property="id" column="id" jdbcType="INTEGER"/>
+        <result property="parentId" column="parent_id" jdbcType="INTEGER"/>
+        <result property="menuName" column="menu_name" jdbcType="VARCHAR"/>
+        <result property="url" column="url" jdbcType="VARCHAR"/>
+        <result property="perms" column="perms" jdbcType="VARCHAR"/>
+        <result property="icon" column="icon" jdbcType="VARCHAR"/>
+        <result property="type" column="type" jdbcType="VARCHAR"/>
+        <result property="orderNum" column="order_num" jdbcType="INTEGER"/>
+        <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+        <result property="modifiedTime" column="modified_time" jdbcType="TIMESTAMP"/>
+        <result property="available" column="available" jdbcType="INTEGER"/>
+        <result property="open" column="open" jdbcType="INTEGER"/>
+    </resultMap>
+
+    <sql id="BaseResult">
+        id, parent_id, menu_name, url, perms, icon, type, order_num, create_time, modified_time, available, open    </sql>
+
+    <!--根据id查询-->
+    <select id="selectById" resultType="com.example.humanresources.entity.TbMenu">
+        select<include refid="BaseResult"/>
+        from tb_menu
+        where id = #{id}
+    </select>
+
+    <!--查询所有数据-->
+    <select id="selectAll" resultMap="TbMenuMap">
+        select<include refid="BaseResult"/>
+        from tb_menu
+    </select>
+
+    <select id="selectByMenuName" resultType="com.example.humanresources.entity.TbMenu" parameterType="String">
+        select<include refid="BaseResult"/>
+        from tb_menu
+        where menu_name=#{menuName}
+    </select>
+
+    <!--新增所有列-->
+    <insert id="insert" keyProperty="id" useGeneratedKeys="true">
+        insert into tb_menu(<include refid="BaseResult"/>)
+        values (null,#{parentId}, #{menuName}, #{url}, #{perms}, #{icon}, #{type}, #{orderNum}, #{createTime}, #{modifiedTime}, #{available}, #{open})
+    </insert>
+
+    <!--通过主键id修改数据-->
+    <update id="updateById">
+        update tb_menu
+        <set>
+            <if test="parentId != null">
+                parent_id = #{parentId},
+            </if>
+            <if test="menuName != null and menuName != ''">
+                menu_name = #{menuName},
+            </if>
+            <if test="url != null and url != ''">
+                url = #{url},
+            </if>
+            <if test="perms != null and perms != ''">
+                perms = #{perms},
+            </if>
+            <if test="icon != null and icon != ''">
+                icon = #{icon},
+            </if>
+            <if test="type != null and type != ''">
+                type = #{type},
+            </if>
+            <if test="orderNum != null">
+                order_num = #{orderNum},
+            </if>
+            <if test="createTime != null">
+                create_time = #{createTime},
+            </if>
+            <if test="modifiedTime != null">
+                modified_time = #{modifiedTime},
+            </if>
+            <if test="available != null">
+                available = #{available},
+            </if>
+            <if test="open != null">
+                open = #{open},
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <!--通过主键id删除-->
+    <delete id="deleteById">
+        delete from tb_menu where id = #{id}
+    </delete>
+
+</mapper>
